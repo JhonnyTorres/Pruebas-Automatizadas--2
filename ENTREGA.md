@@ -1,14 +1,10 @@
 # Entrega · Duelo de herramientas
 
-**Equipo:** ______________________  
-**Integrantes:** ______________________  
-**Repositorio:** ______________________  
-**Herramienta que nos tocó:** ☐ Selenium + Mocha &nbsp; ☐ Cypress &nbsp; ☐ Playwright + Cucumber  
-**Escenario que nos tocó:** ______________________
-
-> Completa este archivo a medida que avanzas (cada sección dice en qué parte de la guía se llena).
-> Lo que se mide con números lo guarda el medidor en `medidas.json`; aquí va lo que un número no dice.
-> Escribe con tus palabras: las respuestas copiadas de la guía, de otro equipo o de un asistente sin pasar por tu criterio no cuentan.
+**Equipo:** Equipo-3-E6
+**Integrantes:** Jonathan Torres Monsalve
+**Repositorio:** https://github.com/JhonnyTorres/Pruebas-Automatizadas--2
+**Herramienta que nos tocó:** ☐ Selenium + Mocha &nbsp; ☒ Cypress &nbsp; ☐ Playwright + Cucumber
+**Escenario que nos tocó:** E6 · Entidad Pública
 
 Archivos que entregan, todos en el repositorio y con `git push`:
 
@@ -25,110 +21,109 @@ Archivos que entregan, todos en el repositorio y con `git push`:
 
 ## 1. Qué hace la herramienta por nosotros (Parte 1)
 
-Lean el ejemplo resuelto (US-01 CA1) en su kit, **línea por línea**, y los archivos de `soporte` o de configuración
-que vienen con él. Para cada tarea que alguien debe cumplir en una prueba de interfaz, digan **quién la hace**:
-*la herramienta sola*, *una librería que hubo que sumar* (¿cuál?) o *código nuestro*. Escriban el archivo y la línea.
-
 | Tarea | ¿Quién la hace? | ¿Dónde lo vemos? (archivo y línea) |
 |---|---|---|
-| Abrir el navegador y cerrarlo al terminar | | |
-| Esperar a que el elemento exista o se pueda usar | | |
-| Reintentar una comprobación que todavía no se cumple | | |
-| Ejecutar las pruebas, contarlas y decir cuántas pasaron | | |
-| Comprobar un valor y mostrar «esperado» y «recibido» | | |
-| Leer el texto de un `alert()` del navegador *(lo descubren en la Parte 2)* | | |
-| Dejar evidencia (captura, video o traza) cuando una prueba falla | | |
+| Abrir el navegador y cerrarlo al terminar | La herramienta sola | No hay ninguna línea nuestra: lo hace `cypress run --browser chrome` (`package.json`, script `test`). |
+| Esperar a que el elemento exista o se pueda usar | La herramienta sola | `duelo.cy.js` línea 5: `cy.get('h3')` espera solo, no escribimos ninguna espera. |
+| Reintentar una comprobación que todavía no se cumple | La herramienta sola | `duelo.cy.js` línea 5: `.should('have.length', 8)` se reintenta hasta 4 s (lo dice el comentario de la línea 4). |
+| Ejecutar las pruebas, contarlas y decir cuántas pasaron | La herramienta sola | `cypress.config.js` (`specPattern`) y la tabla final de `npm test` (Tests / Passing / Failing). |
+| Comprobar un valor y mostrar «esperado» y «recibido» | La herramienta sola (Chai viene incluido) | `.should(...)` en `duelo.cy.js`; al fallar dice «expected 9, found 8». |
+| Leer el texto de un `alert()` del navegador | Código nuestro, con piezas de la herramienta | `duelo.cy.js` líneas 11-12: `cy.stub()` + `cy.on('window:alert')`. Cypress acepta el alert solo, pero para leer el texto hay que escucharlo antes del clic. |
+| Dejar evidencia (captura, video o traza) cuando una prueba falla | La herramienta sola (captura) · configuración del kit (video apagado) | Apareció `cypress/screenshots/...(failed).png`; `cypress.config.js` tiene `video: false`. |
 
 **Con esta tabla:** ¿la herramienta que nos tocó es una *librería*, un *framework*, o una librería con piezas que
-tuvimos que armar nosotros? Respondan en dos frases con la idea «la librería la llamas tú; el framework te llama a ti».
+tuvimos que armar nosotros?
 
-> _Respuesta:_
+> _Respuesta:_ Cypress es un framework: nosotros solo escribimos los `it(...)` y Cypress es el que los llama, abre el
+> navegador, espera, reintenta y cuenta los resultados. Lo único que tocó armar fue la lectura del `alert()`, y aun así
+> con piezas que ya trae (`cy.stub` y `cy.on`).
 
 ## 2. Bitácora de las historias (Partes 2 y 3)
 
-Una columna por historia. «Minutos» son los mismos que anotan en `autoinforme.json`: desde que empiezan a escribir
-hasta que ven la prueba en verde.
-
 | | US-04 CA2 (7 mochilas, stock 6) | US-09 CA1 (DESC10) |
 |---|---|---|
-| Minutos hasta el verde | | |
-| Primer intento que **no** funcionó: qué escribimos y qué dijo la herramienta | | |
-| Mensaje de error que nos ayudó (o que nos confundió) | | |
-| Qué tuvimos que buscar en la documentación (enlace) | | |
-| Qué haría distinto un equipo con más experiencia en esta herramienta | | |
+| Minutos hasta el verde | ___ (ver `autoinforme.json`) | ___ (ver `autoinforme.json`) |
+| Primer intento que **no** funcionó: qué escribimos y qué dijo la herramienta | `cy.get('input[type=number]').clear().type('7')`. Falló: la tienda vuelve a poner 1 cuando el campo queda vacío, así que se escribía 17 y el `should('have.value', '7')` no se cumplía. | Pasó en el primer intento. |
+| Mensaje de error que nos ayudó (o que nos confundió) | Al principio solo vimos «1 failing» en la tabla del final; el detalle estaba más arriba en la terminal. | — |
+| Qué tuvimos que buscar en la documentación (enlace) | `type` con `{selectall}`: https://docs.cypress.io/api/commands/type · stubs para `window:alert`: https://docs.cypress.io/api/cypress-api/catalog-of-events | `contains` y `siblings`: https://docs.cypress.io/api/commands/contains |
+| Qué haría distinto un equipo con más experiencia en esta herramienta | Usaría `{selectall}` desde el principio y pondría atributos `data-cy` en la tienda para no depender de `parent()`. | Sacaría «agregar la mochila» a un comando propio (`Cypress.Commands.add`) porque se repite en US-04 y US-09. |
 
-**Lo más distinto frente a US-01 CA1** (el ejemplo resuelto): ¿qué cambió al leer un `alert()`, al elegir *dentro de
-una tarjeta* y al leer un valor del carrito? Piensen en esperas, selectores y en cómo leyeron el resultado.
+**Lo más distinto frente a US-01 CA1:**
 
-> _Respuesta:_
+> _Respuesta:_ En US-01 basta con contar los `h3`. En US-04 hubo que buscar *dentro* de la tarjeta de la mochila
+> (`within`) y el aviso no está en la página: es un `alert()` y hay que preparar el stub antes del clic, si no se pierde.
+> En US-09 el resultado aparece después de varios pasos y se leyó desde el `<dt>` «Descuento» hacia su `<dd>`. En
+> ningún caso hubo que escribir esperas.
 
 ## 3. Lo que medimos (Parte 4)
 
-Pega el resumen que imprimió `npm run medir` en tu kit y en el control (Playwright Test):
-
 ```text
-(resumen de tu kit)
+(pegar aquí el resumen de npm run medir -- --corridas 10 en kits/cypress)
 ```
 
 ```text
-(resumen del control)
+(pegar aquí el resumen de npm run medir -- --corridas 10 en control/playwright)
 ```
 
 - Mediana de nuestro kit: ______ s · Mediana del control en **nuestra** máquina: ______ s · **Veces el control** (kit ÷ control): ______
 - Corridas completas de nuestro kit: ______ de ______
 - Líneas de código (pruebas + soporte): ______
-- Puntos de diagnóstico (de 5): ______
+- Puntos de diagnóstico (de 5): 4
 
-**El fallo a propósito.** ¿Qué rompieron y cómo? Pega las primeras 10 líneas de lo que dijo la herramienta y señala
-qué ayudaba a encontrar la causa y qué faltaba.
+**El fallo a propósito.** Cambiamos el 8 por 9 en US-01 (`.should('have.length', 9)`).
 
 ```text
-(salida del fallo)
+(pegar aquí las primeras 10 líneas del error rojo que imprimió Cypress)
 ```
 
-**Las cinco preguntas del diagnóstico** (se contestan **con el kit tal como llegó**, y el «sí» o «no» va en `autoinforme.json`).
-En la última columna digan *de dónde vino* cada evidencia: de la **herramienta** (sola), de la **configuración del kit** o de
-**código nuestro**.
+Lo que ayudaba: el mensaje dice cuántos elementos esperaba y cuántos encontró, y marca el archivo y la línea. Lo que
+faltaba: una traza para ver paso a paso qué pasó sin volver a correr la prueba.
 
 | Pregunta (campo en `autoinforme.json`) | ¿Sí o no? | ¿De dónde vino? |
 |---|:---:|---|
-| ¿El mensaje dice **qué** falló (el elemento o la comprobación), sin que haya que adivinar? (`diceQueFallo`) | | |
-| ¿Muestra el valor **esperado** y el **recibido**? (`esperadoYRecibido`) | | |
-| ¿Señala la **línea de nuestra prueba** donde falló? (`lineaDeLaPrueba`) | | |
-| ¿Quedó una **captura de pantalla** (o un video) de la falla en el disco? (`capturaOVideo`) | | |
-| ¿Quedó una **traza o un informe** para repasar la falla paso a paso sin volver a correrla? (`trazaOInforme`) | | |
+| ¿El mensaje dice **qué** falló? (`diceQueFallo`) | Sí | Herramienta |
+| ¿Muestra el valor **esperado** y el **recibido**? (`esperadoYRecibido`) | Sí | Herramienta |
+| ¿Señala la **línea de nuestra prueba** donde falló? (`lineaDeLaPrueba`) | Sí | Herramienta |
+| ¿Quedó una **captura de pantalla** (o un video)? (`capturaOVideo`) | Sí | Herramienta (captura en `cypress/screenshots`); el video lo apaga la configuración del kit |
+| ¿Quedó una **traza o un informe**? (`trazaOInforme`) | No | Test Replay existe pero es de Cypress Cloud (pago) |
 
-**Tres cosas que nuestra medición NO demuestra** (pistas: cuántas pruebas, cuántas corridas, cuántas máquinas,
-qué mide el tiempo, qué cuenta una «línea de código»):
+**Tres cosas que nuestra medición NO demuestra:**
 
-1.
-2.
-3.
+1. Cómo se comporta con cientos de pruebas: aquí son solo 3, así que no se ve el paralelismo ni cuánto crece el tiempo.
+2. Que funcione igual en Edge, Firefox o en equipos viejos: solo medimos en Chrome y en un único computador.
+3. Lo que cuesta mantener las pruebas en el tiempo: 10 corridas seguidas en un día no dicen nada de qué pasa cuando la tienda cambia o sale una versión nueva de Cypress.
 
 ## 4. Mirando el tablero (Parte 5)
 
-Abran el tablero de la clase (el enlace lo da el docente) y respondan **con datos del tablero**, no con opiniones:
-
-1. ¿Qué herramienta fue más rápida, medida en «veces el control»? ¿Y la más estable? ¿Hubo diferencias grandes **dentro** de una misma herramienta entre equipos? ¿A qué lo atribuyen?
-2. ¿Qué herramienta dejó mejor diagnóstico y qué parte vino «de fábrica» o la tuvo que armar el equipo?
-3. Un dato del tablero que les pareció raro. ¿Qué preguntarían a ese equipo antes de usarlo como evidencia?
-
-> _Respuestas:_
+> _Respuestas:_ (completar con los datos del tablero de la clase cuando estén todos los equipos)
+>
+> 1.
+> 2.
+> 3.
 
 ## 5. Matriz y decisión (Partes 5 y 6)
 
-☐ `MATRIZ.md` completa (pesos que suman 100, puntajes con evidencia, total y prueba de sensibilidad)  
-☐ `ADR.md` completo (una página, con consecuencias negativas y qué nos haría cambiar de opinión)  
+☒ `MATRIZ.md` completa (pesos que suman 100, puntajes con evidencia, total y prueba de sensibilidad)
+☒ `ADR.md` completo (una página, con consecuencias negativas y qué nos haría cambiar de opinión)
 ☐ `medidas.json`, `medidas-control.json` y `autoinforme.json` en el repositorio, con `git push`
 
 **Nuestra recomendación en una frase:**
 
-> _…_
+> Para la Entidad Pública recomendamos Selenium, porque se basa en un estándar abierto (W3C WebDriver), no depende de
+> una sola empresa y maneja los navegadores reales que usa la entidad, aunque toca programar más cosas a mano.
 
 ## 6. Reflexión
 
-1. Antes de medir, ¿qué herramienta habríamos recomendado? ¿Cambió algo después de ver los datos de **todas** las herramientas? Si la que recomendamos no es la que nos tocó, ¿por qué? Si lo es, ¿qué habría pasado si nos hubiera tocado otra?
-2. ¿Qué evidencia nos hizo falta y no pudimos medir en esta actividad (por ejemplo: 300 pruebas en lugar de 3, otros navegadores, un mes de mantenimiento)?
-3. En una automatización real, ¿qué parte del esfuerzo creen que es **escribir** las primeras pruebas y qué parte es **mantenerlas**? ¿Qué parte de esto no capta nuestra actividad?
-4. Si el cliente fuera la empresa donde quieren trabajar, ¿qué pesos cambiarían en la matriz?
-5. Si usaron un asistente de IA: ¿en qué momentos ayudó y en cuáles hubo que corregirlo? ¿Cómo cambia eso lo que significan los minutos de `autoinforme.json`?
+1. Antes de medir habríamos dicho Cypress, porque fue la que nos tocó y las pruebas salieron rápido. Al pesar por el
+   escenario cambió: a la entidad le importa más que la herramienta siga existiendo en diez años y que corra en sus
+   navegadores que lo cómodo que sea escribir pruebas. Si nos hubiera tocado Selenium, el código habría sido más largo
+   pero la recomendación sería la misma.
+2. Faltó probar en Edge y Firefox, con versiones viejas, y con una suite grande. También faltó ver cuánto cuesta
+   actualizar las pruebas cuando cambia la tienda.
+3. Escribir las tres primeras pruebas es la parte pequeña. Lo grande es mantenerlas cuando cambian la página, el
+   navegador o la herramienta, y eso la actividad no lo alcanza a medir.
+4. En una empresa de producto que despliega seguido subiría Velocidad, Estabilidad e Integración, y bajaría Cobertura
+   y Comunidad y futuro.
+5. Sí usamos un asistente de IA: escribió el código de US-04 y US-09 y ayudó con la matriz. Hubo que corregirlo en
+   US-04, porque `clear().type('7')` dejaba 17 en el campo. Por eso nuestros minutos no reflejan cuánto le tomaría a
+   alguien escribir esas pruebas solo con la documentación.

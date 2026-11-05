@@ -1,19 +1,21 @@
 {
-  "equipo": "",
-  "integrantes": [],
-  "escenario": "",
-  "usoDeIA": "",
+  "equipo": "Equipo-3-E6",
+  "integrantes": [
+    "Jonathan Torres Monsalve"
+  ],
+  "escenario": "E6",
+  "usoDeIA": "generó código",
   "minutos": {
     "instalacion": null,
     "ca2": null,
     "ca3": null
   },
   "diagnostico": {
-    "diceQueFallo": null,
-    "esperadoYRecibido": null,
-    "lineaDeLaPrueba": null,
-    "capturaOVideo": null,
-    "trazaOInforme": null
+    "diceQueFallo": true,
+    "esperadoYRecibido": true,
+    "lineaDeLaPrueba": true,
+    "capturaOVideo": true,
+    "trazaOInforme": false
   },
-  "notas": ""
+  "notas": "Fallo a propósito: cambié el 8 por 9 en US-01. El mensaje dice qué comprobación falló y muestra lo esperado (9) y lo encontrado (8); eso lo da Cypress solo. También señala duelo.cy.js con la línea. La captura quedó en cypress/screenshots y la toma Cypress solo al fallar con cypress run; el video está apagado en la configuración del kit (video: false). No quedó traza para repasar la falla sin volver a correrla (Test Replay es de Cypress Cloud, que es de pago). El asistente de IA escribió las pruebas de US-04 y US-09; yo las corrí en mi PC. La primera versión de US-04 falló porque el campo quedaba en 17 y se cambió clear() por {selectall}."
 }
